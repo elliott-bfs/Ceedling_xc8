@@ -1,0 +1,15 @@
+device PIC16F18877
+
+set uart1io.uartioenabled           true
+set uart1io.output                  file
+set uart1io.outputfile              build/test/results/out.txt
+set breakoptions.wdtwarnings        Ignore
+
+hwtool sim
+
+program build/test/out/test_build.elf
+break simulatorQuit
+reset
+run
+wait 60000
+quit

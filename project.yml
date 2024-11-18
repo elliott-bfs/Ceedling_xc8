@@ -1,5 +1,5 @@
 :project:
-  :build_root: build/ceedling/generated
+  :build_root: build
   :test_file_prefix: test_
   :which_ceedling: vendor/ceedling
   :use_exceptions: FALSE
@@ -10,23 +10,14 @@
     - test:all
 
 :environment:
-  - :mcu: PIC16F18345
-  - :mplabx_root: "C:/MPLABX/"
-  - :path:
-    - "C:/xc8/bin"
-    - 'D:/Ruby26-x64/bin'
+  - :MCU: PIC16F18877
+  - :MPLABX_ROOT: "C:/Program Files/Microchip/MPLABX/v6.20"
+  - :CC_ROOT: "C:/Program Files/Microchip/xc8/v2.50"
+  - :PATH:
+    - "#{ENV['CC_ROOT']}/bin"
+    - 'C:/Ruby26-x64/bin'
     - "#{ENV['PATH']}"
     - build
-
-
-#:test_build:
-#  :use_assembly: TRUE
-
-#:release_build:
-#  :output: MyApp.out
-#  :use_assembly: FALSE
-
-
 
 :extension:
   :object: .p1
@@ -40,10 +31,15 @@
   :source:
     - src/**
   :include:
-    - "C:/xc8/pic/include"
+    - "#{ENV['CC_ROOT']}/pic/include"
   :support:
     - test/support
   :libraries: []
+
+# Manually add files for compilation
+:files:
+  :support:
+    - sim_helper.c
 
 :defines:
   # in order to add common defines:
@@ -60,9 +56,7 @@
     - TEST
 :unity:
   :defines:
-    - UNITY_EXCLUDE_SETJMP_H
-    - UNITY_EXCLUDE_MATH_H
-    - UNITY_EXCLUDE_FLOAT
+    - UNITY_INCLUDE_CONFIG_H
     
 :cmock:
   :mock_prefix: mock_
@@ -182,7 +176,7 @@
       - -D"$": COLLECTION_DEFINES_TEST_AND_VENDOR
       - -I"$": COLLECTION_PATHS_TEST_SUPPORT_SOURCE_INCLUDE_VENDOR
       - -Wl,-Map="${3}"
-      - -o"./build/ceedling/generated/test/out/test_build.elf"
+      - -o"./build/test/out/test_build.elf"
       - "{'${1}'.split(' ').map { |x| (x.include? '/out/c/') ? (Pathname(x).sub_ext('.p1')).to_s : x }.join(' ') }"
       - "${4}"
 
@@ -200,5 +194,7 @@
   :enabled:
     - stdout_pretty_tests_report
     - module_generator
+    - xml_tests_report
     - raw_output_report
     - warnings_report
+    - junit_tests_report
